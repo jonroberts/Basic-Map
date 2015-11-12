@@ -1,0 +1,224 @@
+<html>
+<head>
+<title>Kickstarting around the USA</title>
+	<meta name="title" content="Kickstarting around the USA"/>
+	<meta name="Description" content="The number of Kickstarters per state measured against parameters such as the GSP or population. And seriously, what is up with Oregon?"/>
+  <link rel="stylesheet" media="all" href="./maps/jquery-jvectormap.css"/>
+<link rel="stylesheet" href="./bootstrap/css/bootstrap.min.css" />
+<link href="./bootstrap/css/bootstrap-responsive.css" rel="stylesheet" />
+  <style>
+	  li { cursor: hand; cursor: pointer; }
+  </style>
+
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.0/jquery.min.js"></script>
+  <script src="./maps/jquery-jvectormap.js"></script>
+  <script src="./maps/jquery-mousewheel.js"></script>
+
+  <script src="./maps/lib/jvectormap.js"></script>
+
+  <script src="./maps/lib/abstract-element.js"></script>
+  <script src="./maps/lib/abstract-canvas-element.js"></script>
+  <script src="./maps/lib/abstract-shape-element.js"></script>
+
+  <script src="./maps/lib/svg-element.js"></script>
+  <script src="./maps/lib/svg-group-element.js"></script>
+  <script src="./maps/lib/svg-canvas-element.js"></script>
+  <script src="./maps/lib/svg-shape-element.js"></script>
+  <script src="./maps/lib/svg-path-element.js"></script>
+  <script src="./maps/lib/svg-circle-element.js"></script>
+
+  <script src="./maps/lib/vml-element.js"></script>
+  <script src="./maps/lib/vml-group-element.js"></script>
+  <script src="./maps/lib/vml-canvas-element.js"></script>
+  <script src="./maps/lib/vml-shape-element.js"></script>
+  <script src="./maps/lib/vml-path-element.js"></script>
+  <script src="./maps/lib/vml-circle-element.js"></script>
+
+  <script src="./maps/lib/vector-canvas.js"></script>
+  <script src="./maps/lib/simple-scale.js"></script>
+  <script src="./maps/lib/ordinal-scale.js"></script>
+  <script src="./maps/lib/numeric-scale.js"></script>
+  <script src="./maps/lib/color-scale.js"></script>
+  <script src="./maps/lib/data-series.js"></script>
+  <script src="./maps/lib/proj.js"></script>
+  <script src="./maps/lib/world-map.js"></script>
+
+  <script src="./maps/maps/jquery-jvectormap-us-aea-en.js"></script>
+  <script>
+	var current_data="KS_nums";
+
+  	var region_codes=["US-VA","US-PA","US-TN","US-ID","US-NV","US-TX","US-NH","US-NY","US-HI","US-VT","US-NM","US-NC","US-ND","US-NE","US-LA","US-SD","US-DC","US-DE","US-FL","US-WA","US-KS","US-WI","US-OR","US-KY","US-CO","US-OH","US-OK","US-WV","US-WY","US-UT","US-IN","US-IL","US-AK","US-NJ","US-ME","US-MD","US-AR","US-MA","US-AL","US-MO","US-MN","US-CA","US-IA","US-MI","US-GA","US-AZ","US-MT","US-MS","US-SC","US-RI","US-CT"];
+  	
+  	var region_vals={"US-NY": 5638, "US-PA": 954, "US-TN": 241, "US-WV": 30, "US-NV": 235, "US-NJ": 125, "US-NH": 55, "US-VA": 217, "US-HI": 32, "US-VT": 139, "US-NM": 114, "US-NC": 468, "US-ND": 31, "US-NE": 42, "US-LA": 360, "US-SD": 33, "US-DE": 32, "US-FL": 682, "US-WA": 1099, "US-KS": 89, "US-WI": 164, "US-OR": 1067, "US-KY": 149, "US-ME": 134, "US-OH": 361, "US-IA": 75, "US-ID": 42, "US-WY": 25, "US-UT": 126, "US-IN": 135, "US-IL": 1520, "US-AK": 59, "US-TX": 670, "US-CO": 232, "US-MD": 351, "US-AR": 44, "US-MA": 284, "US-AL": 91, "US-MO": 436, "US-MN": 621, "US-CA": 5686, "US-OK": 70, "US-MI": 591, "US-GA": 249, "US-AZ": 266, "US-MT": 94, "US-MS": 36, "US-SC": 126, "US-RI": 27, "US-CT": 137};
+  	
+  	var GSPs_2010={"US-NY": 1156500, "US-PA": 575600, "US-TN": 250300, "US-WV": 66600, "US-NV": 127500, "US-NJ": 497000, "US-NH": 61600, "US-VA": 427700, "US-HI": 68900, "US-VT": 26400, "US-NM": 75500, "US-NC": 407400, "US-ND": 33400, "US-NE": 89600, "US-LA": 213600, "US-SD": 39900, "US-DE": 62700, "US-FL": 754000, "US-WA": 351100, "US-KS": 128500, "US-WI": 251400, "US-OR": 168900, "US-KY": 161400, "US-ME": 53200, "US-OH": 483400, "US-IA": 147200, "US-ID": 54800, "US-WY": 38200, "US-UT": 116900, "US-IN": 267600, "US-IL": 644200, "US-AK": 45600, "US-TX": 1307432, "US-CO": 259700, "US-MD": 300000, "US-AR": 105800, "US-MA": 377700, "US-AL": 174400, "US-MO": 246700, "US-MN": 267100, "US-CA": 1936400, "US-OK": 160500, "US-MI": 372400, "US-GA": 403100, "US-AZ": 261300, "US-MT": 37200, "US-MS": 98900, "US-SC": 164300, "US-RI": 49500, "US-CT": 233400};
+  	
+  	var pops_2010={"US-NY": 19.4, "US-PA": 12.7, "US-TN": 6.3, "US-WV": 1.9, "US-NV": 2.7, "US-NJ": 8.8, "US-NH": 1.3, "US-VA": 8.0, "US-HI": 1.4, "US-VT": 0.6, "US-NM": 2.1, "US-NC": 9.5, "US-ND": 0.7, "US-NE": 1.8, "US-LA": 4.5, "US-SD": 0.8, "US-DE": 0.9, "US-FL": 18.8, "US-WA": 6.7, "US-KS": 2.9, "US-WI": 5.7, "US-OR": 3.8, "US-KY": 4.3, "US-ME": 1.3, "US-OH": 11.5, "US-IA": 3.0, "US-ID": 1.6, "US-WY": 0.6, "US-UT": 2.8, "US-IN": 6.5, "US-IL": 12.8, "US-AK": 0.7, "US-TX": 25.1, "US-CO": 5.0, "US-MD": 5.8, "US-AR": 2.9, "US-MA": 6.5, "US-AL": 4.8, "US-MO": 6.0, "US-MN": 5.3, "US-CA": 37.3, "US-OK": 3.8, "US-MI": 9.9, "US-GA": 9.7, "US-AZ": 6.4, "US-MT": 1.0, "US-MS": 3.0, "US-SC": 4.6, "US-RI": 1.1, "US-CT": 3.6};
+  	
+  	var ent_ind_2011={"US-NY": 0.37, "US-PA": 0.16, "US-TN": 0.29, "US-WV": 0.15, "US-NV": 0.39, "US-NJ": 0.27, "US-NH": 0.27, "US-VA": 0.2, "US-HI": 0.18, "US-VT": 0.39, "US-NM": 0.25, "US-NC": 0.28, "US-ND": 0.28, "US-NE": 0.28, "US-LA": 0.34, "US-SD": 0.32, "US-DE": 0.27, "US-FL": 0.38, "US-WA": 0.23, "US-KS": 0.27, "US-WI": 0.23, "US-OR": 0.25, "US-KY": 0.37, "US-ME": 0.36, "US-OH": 0.27, "US-IA": 0.24, "US-ID": 0.38, "US-WY": 0.22, "US-UT": 0.28, "US-IN": 0.2, "US-IL": 0.2, "US-AK": 0.41, "US-TX": 0.44, "US-CO": 0.42, "US-MD": 0.29, "US-AR": 0.34, "US-MA": 0.26, "US-AL": 0.26, "US-MO": 0.4, "US-MN": 0.23, "US-CA": 0.44, "US-OK": 0.21, "US-MI": 0.22, "US-GA": 0.35, "US-AZ": 0.52, "US-MT": 0.33, "US-MS": 0.26, "US-SC": 0.29, "US-RI": 0.22, "US-CT": 0.34};
+
+  	var projectsPerGSP={};
+  	var projectsPerPop={};
+  	var projectsPerEnt={};
+  	for(state in pops_2010){
+	  	projectsPerGSP[state]=region_vals[state]/(1.*GSPs_2010[state]);
+	  	projectsPerPop[state]=region_vals[state]/pops_2010[state];
+	  	projectsPerEnt[state]=projectsPerPop[state]/ent_ind_2011[state];
+  	}
+  	data_keys=[];
+  	mins={};
+  	maxs={};
+
+  	var data={"KS_nums":region_vals,"GSP":GSPs_2010,"pop":pops_2010,"Ent":ent_ind_2011, "KS_per_GSP":projectsPerGSP,"KS_per_pop":projectsPerPop,"KS_per_Ent":projectsPerEnt};
+  	var extra_text={"KS_nums":"","GSP":" $m","pop":" million","Ent":"%", "KS_per_GSP":"","KS_per_pop":"","KS_per_Ent":""};
+  	var data_normed={};
+
+  	for(var key in data){
+  		var tMin=0;
+  		var tMax=0;
+	  	nums=data[key];
+	  	for(var i in nums){
+		  	var num=nums[i];
+		  	if(tMin==0){tMin=num;}
+		  	
+		  	if(num<tMin){tMin=num;}
+		  	if(num>tMax){tMax=num;}
+	  	}
+	  	mins[key]=tMin;
+	  	maxs[key]=tMax;
+	  		  	
+	  	var normedData={};
+	  	for(var state in nums){
+		  	var num=(nums[state]-tMin)/(tMax-tMin);
+		  	normedData[state]=num;
+	  	}
+	  	data_normed[key]=normedData;
+  	}
+
+  	function swapStats(id){
+		var mapObject = $('.map').vectorMap('get', 'mapObject');
+	  	mapObject.series.regions[0].setValues(data_normed[id]);
+	  	$( "li" ).each(function( index ) {
+		  $(this).css("color","grey");
+		});
+		$("#"+id).css("color","black");
+	  	current_data=id;
+  	}
+
+	$(function(){
+      var map = new jvm.WorldMap({
+        container: $('.map'),
+        map: 'us_aea_en',
+        markers:[],
+        backgroundColor:"#ffffff",
+        regionStyle:{
+		  initial: {
+		    fill: 'white',
+		    "fill-opacity": 1,
+		    stroke: 'none',
+		    "stroke-width": 0,
+		    "stroke-opacity": 1
+		  },
+		  hover: {
+		    "fill-opacity": 0.5
+		  },
+		  selected: {
+		    fill: '#89c335'
+		  },
+		  selectedHover: {
+		  }
+		},
+        series: {
+		    regions: [{
+		      scale: ['#f0f7e4', '#89c335'],
+		      attribute: 'fill',
+		      values: data_normed["KS_nums"]
+		    }]        
+        },
+        regionsSelectable: false,
+        markersSelectable: true,
+        markersSelectableOne: true,
+
+        onRegionLabelShow: function(event, label, code){
+	        if(current_data=="KS_per_GSP"){
+		      label.html(label.html()+" "+data[current_data][code].toFixed(4)+extra_text[current_data]);
+			}
+			else if(current_data=="KS_per_pop"||current_data=="KS_per_Ent"){
+		      label.html(label.html()+" "+data[current_data][code].toFixed(1)+extra_text[current_data]);
+			}
+			else{
+		      label.html(label.html()+" "+data[current_data][code]+extra_text[current_data]);
+			}
+
+        },
+        onRegionOver: function(event, code){
+        },
+        onRegionOut: function(event, code){
+        },
+        onRegionClick: function(event, code){
+        },
+        onRegionSelected: function(event, code, isSelected, selectedRegions){
+          if (window.localStorage) {
+            window.localStorage.setItem(
+              'jvectormap-selected-regions',
+              JSON.stringify(selectedRegions)
+            );
+          }
+        },
+        onViewportChange: function(e, scale, transX, transY){
+        }
+      });
+    });
+      
+  </script>
+</head>
+<body onload="swapStats('KS_nums')">
+<div class="container">
+	<div class="row">
+	<div class="span-4">
+	  <ul class="nav nav-list well" style="margin-top:10px">
+		  <li id="KS_nums" onclick=swapStats(this.id)>Number of Kickstarters</li>
+			<li class="divider"></li>
+
+		  <li id="pop" onclick=swapStats(this.id)>Population (million)</li>
+		  <li id="GSP" onclick=swapStats(this.id)>Gross State Product (GSP) (million)</li>
+		  <li id="Ent" onclick=swapStats(this.id)>Entrepreneurship index</li>
+			<li class="divider"></li>
+		  <li id="KS_per_pop" onclick=swapStats(this.id)>Kickstarters per million population</li>
+		  <li id="KS_per_GSP" onclick=swapStats(this.id)>Kickstarters per million GSP</li>
+		  <li id="KS_per_Ent" onclick=swapStats(this.id)>Kickstarters per entrepreneur<br/>(arbitrary units)</li>
+	  </ul>
+	  <br/>
+	  
+	  <a href="#myModal" role="button" class="btn" data-toggle="modal">About the data</a>
+		<div id="myModal" class="modal hide fade">
+		  <div class="modal-header">
+	    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+	    <h3>About the Data</h3>
+	  </div>
+		  <div class="modal-body">
+		  <h4>Number of Kickstarters</h4>
+	    <p>The number of Kickstarters is the sum of number of successful and currently running Kickstarters in the top ten cities in each state, plus the state capital, taken from <a href="http://www.kickstarter.com/" target=_blank>Kickstarter</a></p>
+		  <h4>Population</h4>
+		  <p>The populations are in millions and are taken from the <a href="http://en.wikipedia.org/wiki/List_of_U.S._states_by_GDP" target=_blank>2010 data on Wikipedia</a>.</p>
+		  <h4>GSP</h4>
+		  <p>The Gross State Product is from 2010 data and is taken <a href="http://en.wikipedia.org/wiki/List_of_U.S._states_by_GDP" target=_blank>from Wikipedia</a>.</p>
+		  <h4>Entrepeneurship Index</h4>
+		  <p>The Ewing Marion Kauffman Foundation releases a <a href="http://www.kauffman.org/research-and-policy/kauffman-index-of-entrepreneurial-activity.aspx" target=_blank>yearly summary of entrepeneurship</a> on a state by state basis. The Entrepeneurship index is defined as <em>the percent of individuals (ages 20-64) who do not own a business in the first survey month that start a business in the following month with 15 or more hours worked.</em> The data can be downloaded from <a href="http://sites.kauffman.org/kauffmanindex/resources/kiea_state9611.xlsx">here</a>.</p>
+	  </div>
+		  <div class="modal-footer">
+		  <p class="muted">Created using the <a href="http://jvectormap.com/" target=_blank>jvectormap</a> javascript plugin</p>
+		</div>
+	</div>
+
+	</div>
+	<div class="span-8">
+		<div class="map" style="width: 800px; height: 600px;"></div>
+	</div>
+	</div>
+	
+</div>
+</body>
+<script src="./bootstrap/js/bootstrap.min.js"></script>
+
+</html>
